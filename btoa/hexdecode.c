@@ -17,7 +17,7 @@
  * $Id: hexdecode.c,v 2.0 1991/02/19 15:49:29 ram Exp $
  *
  * $Log: hexdecode.c,v $
- * Revision 2.0  1991/02/19 15:49:29  ram
+ * Revision 2.0  1991/02/19  15:49:29  ram
  * Baseline for first official release.
  *
  */

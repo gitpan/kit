@@ -7,7 +7,7 @@
  * $Id: des.c,v 2.0.1.3 1993/04/26 11:18:34 ram Exp $
  *
  * $Log: des.c,v $
- * Revision 2.0.1.3  1993/04/26 11:18:34  ram
+ * Revision 2.0.1.3  1993/04/26  11:18:34  ram
  * patch27: added support for 64 bits architecture (tested on Alpha)
  *
  * Revision 2.0.1.2  92/01/11  19:15:41  ram

@@ -22,16 +22,13 @@ $startsh
 # Which patch-level is it ?
 pl='$PATCHLEVEL'
 version='$VERSION'
-libdir='$privlibexp'
+libdir='$privlib'
 !GROK!THIS!
 $spitshell >>kit <<'!NO!SUBS!'
 
-# $Id: kit.SH,v 2.0.1.16 1998/03/30 14:22:46 ram Exp $
+# $Id: kit.SH,v 2.0.1.15 1995/10/12 11:13:50 ram Exp $
 #
 # $Log: kit.SH,v $
-# Revision 2.0.1.16  1998/03/30 14:22:46  ram
-# patch35: added support for alternate compression schemes through -C
-#
 # Revision 2.0.1.15  1995/10/12  11:13:50  ram
 # patch32: force removal of read-only (copied from lib) temporary files
 #
@@ -107,8 +104,6 @@ others=''					# Other files to be included
 instruct=''					# Added instrucutions (minikit / acknowledgment)
 ack=''						# Acknowledgment file
 ackto=''					# Acknowledgment address
-ctag='default'				# Compression tag
-address=''					# Address list for mailkit
 
 # Mailkit options
 mailopt=""
@@ -120,10 +115,9 @@ desopt=""
 
 # Old Bourne shells do not have functions
 usage='
-echo "Usage: kit [-BEFHMVXefhpx] [-S size] [-a address] [-d dir] [-k key] [-l file]";
-echo " "" "" "" "" "" "" [-m address] [-n basename] [-C compress-tag] [-s name] dirs | files";
+echo "Usage: kit [-BEFHMVXefhpx] [-S size] [-a address] [-d dir] [-k key]";
+echo " "" "" "" "" "" "" [-l file] [-m address] [-n basename] [-s name] dirs | files";
 echo " "" -B : use btoa encoding (default).";
-echo " "" -C : select alternative compression scheme.";
 echo " "" -E : edit instructions for part #0 (passed to mailkit).";
 echo " "" -F : feed instructions from stdin to part #0 (passed to mailkit).";
 echo " "" -H : use hex-encoding.";
@@ -147,7 +141,7 @@ exit 1
 '
 
 # Process the command line options
-eval "set X "`$libdir/getopt BC:EFHMVXefhpxS:a:d:k:l:m:n:s: "$@"`; shift
+eval "set X "`$libdir/getopt BEFHMVXefhpxS:a:d:k:l:m:n:s: "$@"`; shift
 while test $# -gt 0
 do
 	case "$1" in 
@@ -169,10 +163,6 @@ do
 	-B) shift
 		coding=btoa
 		code="ba"
-		;;
-	-C) ctag="$2"
-		shift
-		shift
 		;;
 	-E|-e|-F|-f|-p) mailopt="$mailopt $1"
 		shift
@@ -245,14 +235,6 @@ then
 	eval $usage
 fi
 
-# When using minikit, the default compression scheme must be used.
-if test "x$minikit" != x; then
-	if test "x$ctag" != xdefault; then
-		echo >&2 "kit: cannot select \"$ctag\" compression with minikit."
-		exit 1
-	fi
-fi
-
 # Check the writing permissions in the tmp directory. Also ifsome Kit parts are
 # detected, complain and abort.
 if test -w "$tmpdir" -a -d "$tmpdir"; then
@@ -279,17 +261,6 @@ zag);;
 *) desopt="$desopt -e"$key
 	coding="des $desopt | "$coding;;
 esac
-
-# Compute proper compressing command
-compress=`$libdir/getproc "$ctag" compress`
-case "$compress" in
-'')
-	echo "kit: unknown \"$ctag\" compressing tag, please use one of:" >&2
-	$libdir/getproc | sed -e 's/^/kit: /' >&2
-	exit 1
-	;;
-esac
-uncompress=`$libdir/getproc "$ctag" uncompress`
 
 # Subject is user-provided or the first file name is used
 case "$subject" in
@@ -326,26 +297,14 @@ split_file=$mode.$code.		# Name used for spliting
 
 # In case we are interrupted
 trap "rm -f $tmpfile; cd $tmpdir; rm -f $partname?? ${split_file}* \
-	$others $minikit $partname??.$$; echo >&2 'Aborted.'; exit 1" 1 2 3 15
-
-rm -f zzz.minikit
-
-# Create the zzz.zcat file if they selected an alternate compression
-case "$ctag" in
-default) ;;
-*)
-	others="$others zzz.zcat zzz.minikit"
-	echo "$uncompress" >zzz.zcat
-	echo "zzz.zcat" >>zzz.minikit
-	;;
-esac
+	$others $partname??.$$; echo >&2 'Aborted.'; exit 1" 1 2 3 15
 
 # We have to use a tmp file to avoid des prompting while tar is running
-tar cvf - $@ | $compress > $tmpfile
+tar cvf - $@ | compress -v > $tmpfile
 case $? in
 0) break;;
 *) echo >&2 "kit: archiving failed."
-	rm -f $tmpfile $others
+	rm -f $tmpfile
 	exit 1
 	;;
 esac
@@ -359,13 +318,8 @@ if test "$minikit"; then
 		chmod +x $minikit
 		# Name of the minikit program is passed along to unkit, so that the
 		# script may be removed when unkit is ran...
-		echo "$minikit" >> zzz.minikit
-		others="$others $minikit"
-		# Add zzz.minikit unless already there
-		case "$others" in
-		*zzz.minikit*);;
-		*) others="$others zzz.minikit";;
-		esac
+		echo "$minikit" > zzz.minikit
+		others="zzz.minikit $minikit"
 		# Prepare instructions for later
 		instruct=">>
 >> In case you do not have unkit, you may proceeed as follows:
@@ -389,7 +343,6 @@ if test "$ack"; then
 	echo "zzz.ack" >> zzz.minikit
 	echo "zzz.subject" >> zzz.minikit
 	others="$others zzz.subject zzz.ack"
-	# Add zzz.minikit unless already there
 	case "$others" in
 	*zzz.minikit*);;
 	*) others="$others zzz.minikit";;

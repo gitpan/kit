@@ -12,7 +12,7 @@ esac
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
-echo "Extracting kit/lib/range (with variable substitutions)"
+echo "Extracting kit/range (with variable substitutions)"
 $spitshell >range <<!GROK!THIS!
 $startsh
 !GROK!THIS!
@@ -22,12 +22,12 @@ $spitshell >>range <<'!NO!SUBS!'
 # Numbers may be space or comma separated. Ranges are a-b. If a is missing,
 # 1 is assumed. If b is missing, the maximum value is used.
 
-# $Id: range.SH,v 2.0.1.2 92/05/08 11:17:30 ram Exp $
+# $Id: range.SH,v 2.0.1.2 1992/05/08 11:17:30 ram Exp $
 #
-# $Log:	range.SH,v $
-# Revision 2.0.1.2  92/05/08  11:17:30  ram
+# $Log: range.SH,v $
+# Revision 2.0.1.2  1992/05/08  11:17:30  ram
 # patch17: some awk hang up with </dev/null within backquotes
-# 
+#
 # Revision 2.0.1.1  92/05/02  14:17:22  ram
 # patch16: created
 # 

@@ -13,7 +13,7 @@ esac
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
-echo "Extracting kit/lib/getopt (with variable substitutions)"
+echo "Extracting kit/getopt (with variable substitutions)"
 $spitshell >getopt <<!GROK!THIS!
 $startsh
 !GROK!THIS!
@@ -29,12 +29,12 @@ $spitshell >>getopt <<'!NO!SUBS!'
 # any optional '--' split up, for instance '-lfoo' becomes '-l foo' if l: is
 # given in optstr, and '-lf' becomes '-l -f' if only lf is given as optstr.
 
-# $Id: getopt.SH,v 2.0.1.2 93/01/22 12:10:59 ram Exp $
+# $Id: getopt.SH,v 2.0.1.2 1993/01/22 12:10:59 ram Exp $
 #
-# $Log:	getopt.SH,v $
-# Revision 2.0.1.2  93/01/22  12:10:59  ram
+# $Log: getopt.SH,v $
+# Revision 2.0.1.2  1993/01/22  12:10:59  ram
 # patch23: take care of '-n' on BSD systems (meaningful to echo)
-# 
+#
 # Revision 2.0.1.1  93/01/11  18:04:27  ram
 # patch22: created
 # 

@@ -24,7 +24,7 @@
  * $Id: btoa.c,v 2.0.1.1 1993/04/26 11:18:21 ram Exp $
  *
  * $Log: btoa.c,v $
- * Revision 2.0.1.1  1993/04/26 11:18:21  ram
+ * Revision 2.0.1.1  1993/04/26  11:18:21  ram
  * patch27: added support for 64 bits architecture (tested on Alpha)
  *
  * Revision 2.0  91/02/19  15:49:25  ram

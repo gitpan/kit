@@ -18,13 +18,9 @@ $startsh
 # @(#) Mailer for kit files
 # @(#) (c) R. Manfredi, 1990-1993
 
-# $Id: mailkit.SH,v 2.0.1.14 1998/03/30 14:23:46 ram Exp $
+# $Id: mailkit.SH,v 2.0.1.13 1993/04/26 11:19:31 ram Exp $
 #
 # $Log: mailkit.SH,v $
-# Revision 2.0.1.14  1998/03/30 14:23:46  ram
-# patch35: set proper address list (comma separated) for mail header
-# patch35: use privlibexp for libdir to get ~expanded version
-#
 # Revision 2.0.1.13  1993/04/26  11:19:31  ram
 # patch27: copyright dates updated
 #
@@ -93,7 +89,7 @@ editor=$defeditor
 # Which patch-level is it ?
 pl='$PATCHLEVEL'
 version='$VERSION'
-libdir='$privlibexp'
+libdir='$privlib'
 !GROK!THIS!
 $spitshell >>mailkit <<'!NO!SUBS!'
 
@@ -307,9 +303,6 @@ echo $address | tr ' ' '\012' | sed -e 's/^/	/'
 # Expand given range
 range=`$libdir/range $nfiles $range`
 
-# Set proper address list (comma separated) for mail header
-to=`echo $address | tr ' ' ','`
-
 for i in $range
 do
 	# Add leading zero if number < 10
@@ -330,7 +323,7 @@ do
 		# first line is a subject. Oh well...
 		cat > $topmsg <<EOH
 Subject: $prog_name - kit #$i / $nfiles
-To: $to
+To: $address
 Precedence: bulk
 X-Mailer: mailkit [version $version PL$pl]
 

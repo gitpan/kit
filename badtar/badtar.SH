@@ -21,7 +21,7 @@ $spitshell >badtar.$manext <<!GROK!THIS!
 ''' $Id: badtar.SH,v 2.0.1.3 1993/04/26 11:15:53 ram Exp $
 '''
 ''' $Log: badtar.SH,v $
-''' Revision 2.0.1.3  1993/04/26 11:15:53  ram
+''' Revision 2.0.1.3  1993/04/26  11:15:53  ram
 ''' patch27: manual page name was mis-spelled BABTAR
 '''
 ''' Revision 2.0.1.2  92/05/02  14:10:56  ram

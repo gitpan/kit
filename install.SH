@@ -21,7 +21,7 @@ $startsh
 # $Id: install.SH,v 2.0.1.3 1992/05/02 14:12:31 ram Exp $
 #
 # $Log: install.SH,v $
-# Revision 2.0.1.3  1992/05/02 14:12:31  ram
+# Revision 2.0.1.3  1992/05/02  14:12:31  ram
 # patch16: minor typo fix in mkdir_p
 #
 # Revision 2.0.1.2  91/07/30  17:20:35  ram

@@ -3,7 +3,7 @@
  * $Id: getopt.c,v 2.0.1.1 1991/04/01 15:39:52 ram Exp $
  *
  * $Log: getopt.c,v $
- * Revision 2.0.1.1  1991/04/01 15:39:52  ram
+ * Revision 2.0.1.1  1991/04/01  15:39:52  ram
  * patch1: created
  *
  */

@@ -1,13 +1,10 @@
 /*
- * $Id: getpass.c,v 2.0.1.3 1998/03/30 14:22:05 ram Exp $
+ * $Id: getpass.c,v 2.0.1.2 1991/04/30 13:33:30 ram Exp $
  *
  * $Log: getpass.c,v $
- * Revision 2.0.1.3  1998/03/30 14:22:05  ram
- * patch35: switched to new metaconfig symbols
+ * Revision 2.0.1.2  1991/04/30  13:33:30  ram
+ * patch3: now relies on the new metaconfig symbol SIGNAL_T
  *
- * Revision 2.0.1.2  91/04/30  13:33:30  ram
- * patch3: now relies on the new metaconfig symbol Signal_t
- * 
  * Revision 2.0.1.1  91/04/01  15:40:01  ram
  * patch1: created
  * 
@@ -27,7 +24,7 @@
 #ifdef I_SGTTY
 #include <sgtty.h>
 #endif
-#ifdef I_SYS_IOCTL
+#ifdef I_SYSIOCTL
 #include <sys/ioctl.h>
 #endif
 
@@ -53,8 +50,8 @@ char *prompt;
 #endif
 #endif
 
-	extern Signal_t (*signal())();
-	Signal_t (*sig)();
+	extern SIGNAL_T (*signal())();
+	SIGNAL_T (*sig)();
 
 	if ((tty = fdopen(open(TTY, 2), "r")) == NULL)
 		tty = stdin;

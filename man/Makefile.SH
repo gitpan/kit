@@ -1,158 +1,73 @@
-: Makefile.SH generated from Jmake.tmpl and Jmakefile [jmake 3.0 PL13]
-: $X-Id: Jmake.tmpl,v 3.0.1.1 1993/08/20 07:36:36 ram Exp ram $
-
 case $CONFIG in
 '')
-	if test -f config.sh; then TOP=.;
-	elif test -f ../config.sh; then TOP=..;
-	elif test -f ../../config.sh; then TOP=../..;
-	elif test -f ../../../config.sh; then TOP=../../..;
-	elif test -f ../../../../config.sh; then TOP=../../../..;
-	else
-		echo "Can't find config.sh."; exit 1
-	fi
-	. $TOP/config.sh
+	if test ! -f config.sh; then
+		ln ../config.sh . || \
+		ln ../../config.sh . || \
+		ln ../../../config.sh . || \
+		(echo "Can't find config.sh."; exit 1)
+	fi 2>/dev/null
+	. config.sh
 	;;
 esac
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
-CURRENT=man
-DIR=`echo $CURRENT/ | sed -e 's/\.\///g'`
-echo "Extracting ${DIR}Makefile (with variable substitutions)"
-DATE=`date`
+echo "Extracting man/Makefile (with variable substitutions)"
 $spitshell >Makefile <<!GROK!THIS!
-########################################################################
-# Makefile generated from Makefile.SH on $DATE
+#
+# Makefile for kit (sub-directory man)
+#
+
+# $Id: Makefile.SH,v 2.0.1.3 1992/04/20 17:39:21 ram Exp $
+#
+# $Log: Makefile.SH,v $
+# Revision 2.0.1.3  1992/04/20  17:39:21  ram
+# patch15: now creates directories before installing
+#
+# Revision 2.0.1.2  91/05/27  14:30:53  ram
+# patch5: search for config.sh is now silent
+# 
+# Revision 2.0.1.1  91/04/30  13:35:12  ram
+# patch3: installation of manual pages made optional
+# 
+# Revision 2.0  91/02/19  15:50:12  ram
+# Baseline for first official release.
+# 
 
 SHELL = /bin/sh
-JMAKE = jmake
-TOP = ..
-CURRENT = $CURRENT
-DIR = $DIR
-INSTALL = ../install
 
-########################################################################
-# Parameters set by Configure -- edit config.sh if changes are needed
+RM = $rm
+man = $mansrc
 
-CTAGS = ctags
-L = $manext
-MANSRC = $installmansrc
-MAKE = make
-MV = $mv
-RM = $rm -f
-
-########################################################################
-# Automatically generated parameters -- do not edit
-
-MANPAGE =  \$(MPAGES)
-
-########################################################################
-# New suffixes and associated building rules -- edit with care
-
-.SUFFIXES: .SH .$manext
+.SUFFIXES: .$manext .SH
 
 .SH.$manext:
-	/bin/sh \$<
+	sh $<
 
+L = $manext
 !GROK!THIS!
 $spitshell >>Makefile <<'!NO!SUBS!'
-########################################################################
-# Jmake rules for building libraries, programs, scripts, and data files
-# $X-Id: Jmake.rules,v 3.0 1993/08/18 12:04:14 ram Exp ram $
+manpage = atob.$(L) btoa.$(L) kit.$(L) mailkit.$(L) unkit.$(L)
+added = Makefile config.sh
 
-########################################################################
-# Start of Jmakefile
+.SH:
+	sh $<
 
-# $X-Id: Jmakefile,v 2.9 92/07/14 16:49:04 ram Exp $
-#
-#  @COPYRIGHT@
-#
-# $X-Log:	Jmakefile,v $
-# Revision 2.9  92/07/14  16:49:04  ram
-# 3.0 beta baseline.
-#
+all: $(manpage)
 
-MPAGES = kit.$(L) unkit.$(L) mailkit.$(L) atob.$(L) btoa.$(L)
-
-all:: $(MPAGES)
-
-local_realclean::
-	$(RM) $(MPAGES)
-
-install.man::
-	@if test "$(MANSRC)"; then \
-		case '${MFLAGS}' in *[i]*) set +e;; esac; \
-		for file in $(MPAGES); do \
-			(set -x; $(INSTALL) -c -m 444 $$file $(MANSRC)); \
+install: all
+	-if test "$(man)"; then \
+		../install -d $(man); \
+		for file in $(manpage); do \
+			../install -m 444 $$file $(man); \
 		done; \
-	else exit 0; fi
+	fi
 
-deinstall.man::
-	@if test "$(MANSRC)"; then \
-		case '${MFLAGS}' in *[i]*) set +e;; esac; \
-		for file in $(MPAGES); do \
-			(set -x; $(RM) $(MANSRC)/$$file); \
-		done; \
-	else exit 0; fi
+clean:
+	$(RM) -f $(manpage)
 
-########################################################################
-# Common rules for all Makefiles -- do not edit
-
-emptyrule::
-
-clean: local_clean
-realclean: local_realclean
-clobber: local_clobber
-
-local_clean::
-	$(RM) core *~ *.o
-
-local_realclean:: local_clean
-
-local_clobber:: local_realclean
-	$(RM) Makefile config.sh
-
-Makefile.SH: Jmakefile
-	-@if test -f $(TOP)/.package; then \
-		if test -f Makefile.SH; then \
-			echo "	$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~"; \
-			$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~; \
-		fi; \
-		echo "	$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT)" ; \
-		$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT) ; \
-	else touch $@; exit 0; fi
-
-Makefile: Makefile.SH
-	/bin/sh Makefile.SH
-
-tags::
-	$(CTAGS) -w *.[ch]
-	$(CTAGS) -xw *.[ch] > tags
-
-local_clobber::
-	$(RM) tags
-
-########################################################################
-# Empty rules for directories with no sub-directories -- do not edit
-
-install::
-	@echo "install in $(CURRENT) done."
-
-deinstall::
-	@echo "deinstall in $(CURRENT) done."
-
-install.man::
-	@echo "install.man in $(CURRENT) done."
-
-deinstall.man::
-	@echo "deinstall.man in $(CURRENT) done."
-
-Makefiles::
-
-Makefiles.SH::
-
+realclean clobber: clean
+	$(RM) -f $(added)
 !NO!SUBS!
-chmod 644 Makefile
+chmod 755 Makefile
 $eunicefix Makefile
-

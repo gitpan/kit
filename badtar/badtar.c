@@ -4,7 +4,7 @@
  * $Id: badtar.c,v 2.0.1.4 1993/02/19 14:52:24 ram Exp $
  *
  * $Log: badtar.c,v $
- * Revision 2.0.1.4  1993/02/19 14:52:24  ram
+ * Revision 2.0.1.4  1993/02/19  14:52:24  ram
  * patch26: wrongly reported end-of-tape when last block was short
  * patch26: one short tar block will now correctly be accounted for
  *

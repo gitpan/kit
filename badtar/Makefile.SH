@@ -1,218 +1,79 @@
-: Makefile.SH generated from Jmake.tmpl and Jmakefile [jmake 3.0 PL13]
-: $X-Id: Jmake.tmpl,v 3.0.1.1 1993/08/20 07:36:36 ram Exp ram $
-
 case $CONFIG in
 '')
-	if test -f config.sh; then TOP=.;
-	elif test -f ../config.sh; then TOP=..;
-	elif test -f ../../config.sh; then TOP=../..;
-	elif test -f ../../../config.sh; then TOP=../../..;
-	elif test -f ../../../../config.sh; then TOP=../../../..;
-	else
-		echo "Can't find config.sh."; exit 1
-	fi
-	. $TOP/config.sh
+	if test ! -f config.sh; then
+		ln ../config.sh . || \
+		ln ../../config.sh . || \
+		ln ../../../config.sh . || \
+		(echo "Can't find config.sh."; exit 1)
+	fi 2>/dev/null
+	. config.sh
 	;;
 esac
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
-CURRENT=badtar
-DIR=`echo $CURRENT/ | sed -e 's/\.\///g'`
-echo "Extracting ${DIR}Makefile (with variable substitutions)"
-DATE=`date`
+echo "Extracting badtar/Makefile (with variable substitutions)"
 $spitshell >Makefile <<!GROK!THIS!
-########################################################################
-# Makefile generated from Makefile.SH on $DATE
+#
+# Makefile for kit (sub-directory badtar)
+#
+
+# $Id: Makefile.SH,v 2.0.1.2 1992/04/20 17:31:53 ram Exp $
+#
+# $Log: Makefile.SH,v $
+# Revision 2.0.1.2  1992/04/20  17:31:53  ram
+# patch15: now creates directories before installing
+#
+# Revision 2.0.1.1  92/01/11  19:11:57  ram
+# patch11: created
+# 
 
 SHELL = /bin/sh
-JMAKE = jmake
-TOP = ..
-CURRENT = $CURRENT
-DIR = $DIR
-INSTALL = ../install
 
-########################################################################
-# Parameters set by Configure -- edit config.sh if changes are needed
-
-BINDIR = $installbin
 CC = $cc
-CTAGS = ctags
-JCFLAGS = \$(CFLAGS) $optimize $ccflags $large
-JLDFLAGS = \$(LDFLAGS) $optimize $ldflags
-L = $manext
-LIBS = $libs
-MANSRC = $installmansrc
-MAKE = make
-MKDEP = $mkdep \$(DPFLAGS) --
-MV = $mv
-RM = $rm -f
-SED = $sed
-
-########################################################################
-# Automatically generated parameters -- do not edit
-
-SOURCES =  badtar.c
-MANPAGE =  \$(MANPAGE)
-OBJECTS =  badtar.o
-
-########################################################################
-# New suffixes and associated building rules -- edit with care
-
-.SUFFIXES: .SH .$manext
-
-.c.o:
-	\$(CC) -c \$(JCFLAGS) \$<
-
-.SH.$manext:
-	/bin/sh \$<
-
+CFLAGS = $ccflags $optimize
+RM = $rm
+bin = $bin
+man = $mansrc
+manpage = badtar.$manext
 !GROK!THIS!
+case "$wantbtar" in
+true)
 $spitshell >>Makefile <<'!NO!SUBS!'
-########################################################################
-# Jmake rules for building libraries, programs, scripts, and data files
-# $X-Id: Jmake.rules,v 3.0 1993/08/18 12:04:14 ram Exp ram $
 
-########################################################################
-# Force 'make depend' to be performed first -- do not edit
-
-.FORCE_DEPEND::
-
-all:: .FORCE_DEPEND
-
-########################################################################
-# Start of Jmakefile
-
-# $X-Id: Jmakefile,v 2.9 92/07/14 18:41:10 ram Exp $
-#
-#  @COPYRIGHT@
-#
-# $X-Log:	Jmakefile,v $
-# Revision 2.9  92/07/14  18:41:10  ram
-# 3.0 beta baseline.
-#
-
-# File config.h is in the top-level directory
-CFLAGS = -I$(TOP)
-DPFLAGS = -I$(TOP)
-
-MANPAGE = badtar.$(L)
-
-depend:: ../mkdep
-
-../mkdep:
-	@echo "You have to run Configure in $(TOP) first."; exit 1
-
-depend::
-	($(SED) '/^# DO NOT DELETE/q' Makefile && \
-	$(MKDEP) $(SOURCES) | \
-	$(SED) 's/: \.\//: /; /\/usr\/include/d' \
-	) > Makefile.new
-	cp Makefile Makefile.bak
-	cp Makefile.new Makefile
-	$(RM) Makefile.new
-
-all:: badtar
-
-local_realclean::
-	$(RM) badtar
+all: badtar $(manpage)
 
 badtar: badtar.o
-	$(RM) $@
-	if test -f $@; then $(MV) $@ $@~; else exit 0; fi
-	$(CC) -o $@ badtar.o $(JLDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -o badtar badtar.o
 
-install:: badtar
-	$(INSTALL) -c -s -m 555  badtar $(BINDIR)
+$(manpage): badtar.SH
+	/bin/sh badtar.SH
 
-deinstall::
-	$(RM) $(BINDIR)/badtar
+install: badtar $(manpage)
+	../install -d $(bin)
+	../install -s -m 755 badtar $(bin)
+	-if test "$(man)"; then \
+		../install -d $(man); \
+		../install -m 444 $(manpage) $(man); \
+	fi
 
-all:: $(MANPAGE)
+clean:
+	rm -f *.o badtar $(manpage)
 
-local_realclean::
-	$(RM) $(MANPAGE)
-
-install.man::
-	@if test "$(MANSRC)"; then \
-		case '${MFLAGS}' in *[i]*) set +e;; esac; \
-		for file in $(MANPAGE); do \
-			(set -x; $(INSTALL) -c -m 444 $$file $(MANSRC)); \
-		done; \
-	else exit 0; fi
-
-deinstall.man::
-	@if test "$(MANSRC)"; then \
-		case '${MFLAGS}' in *[i]*) set +e;; esac; \
-		for file in $(MANPAGE); do \
-			(set -x; $(RM) $(MANSRC)/$$file); \
-		done; \
-	else exit 0; fi
-
-########################################################################
-# Common rules for all Makefiles -- do not edit
-
-emptyrule::
-
-clean: local_clean
-realclean: local_realclean
-clobber: local_clobber
-
-local_clean::
-	$(RM) core *~ *.o
-
-local_realclean:: local_clean
-
-local_clobber:: local_realclean
-	$(RM) Makefile config.sh
-
-Makefile.SH: Jmakefile
-	-@if test -f $(TOP)/.package; then \
-		if test -f Makefile.SH; then \
-			echo "	$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~"; \
-			$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~; \
-		fi; \
-		echo "	$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT)" ; \
-		$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT) ; \
-	else touch $@; exit 0; fi
-
-Makefile: Makefile.SH
-	/bin/sh Makefile.SH
-
-tags::
-	$(CTAGS) -w *.[ch]
-	$(CTAGS) -xw *.[ch] > tags
-
-local_clobber::
-	$(RM) tags
-
-########################################################################
-# Empty rules for directories with no sub-directories -- do not edit
-
-install::
-	@echo "install in $(CURRENT) done."
-
-deinstall::
-	@echo "deinstall in $(CURRENT) done."
-
-install.man::
-	@echo "install.man in $(CURRENT) done."
-
-deinstall.man::
-	@echo "deinstall.man in $(CURRENT) done."
-
-Makefiles::
-
-Makefiles.SH::
-
-########################################################################
-# Dependencies generated by make depend
-# DO NOT DELETE THIS LINE -- make depend relies on it
-
-# Put nothing here or make depend will gobble it up
-.FORCE_DEPEND::
-	@echo "You must run 'make depend' in $(TOP) first."; exit 1
 !NO!SUBS!
-chmod 644 Makefile
-$eunicefix Makefile
+	;;
+*)
+$spitshell >>Makefile <<'!NO!SUBS!'
 
+all install clean:
+
+!NO!SUBS!
+	;;
+esac
+$spitshell >>Makefile <<'!NO!SUBS!'
+realclean clobber: clean
+	$(RM) -f core Makefile config.sh
+
+!NO!SUBS!
+chmod 755 Makefile
+$eunicefix Makefile

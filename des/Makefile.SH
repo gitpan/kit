@@ -18,18 +18,12 @@ $spitshell >Makefile <<!GROK!THIS!
 # Makefile for kit (sub-directory des)
 #
 
-# $Id: Makefile.SH,v 2.0.1.7 2000/10/19 18:16:12 ram Exp $
+# $Id: Makefile.SH,v 2.0.1.5 1992/04/20 17:32:21 ram Exp $
 #
 # $Log: Makefile.SH,v $
-# Revision 2.0.1.7  2000/10/19 18:16:12  ram
-# patch38: has a separate install.man target
-#
-# Revision 2.0.1.6  1998/03/30  14:21:27  ram
-# patch35: use binexp as bin directory to get the ~expanded version
-#
-# Revision 2.0.1.5  92/04/20  17:32:21  ram
+# Revision 2.0.1.5  1992/04/20  17:32:21  ram
 # patch15: now creates directories before installing
-# 
+#
 # Revision 2.0.1.4  92/01/11  19:13:59  ram
 # patch11: now depends on the 'hasdes' configuration variable
 # 
@@ -50,7 +44,7 @@ CC = $cc
 CFLAGS = $ccflags $optimize
 MAKE = make
 RM = $rm
-bin = $binexp
+bin = $bin
 !GROK!THIS!
 case "$hasdes" in
 false)
@@ -71,6 +65,7 @@ certify: testdata
 install: des
 	../install -d $(bin)
 	../install -s -m 755 des $(bin)
+	@echo "	Warning: manual pages for des not installed."
 
 clean:
 	rm -f *.o des descert
@@ -88,9 +83,6 @@ esac
 $spitshell >>Makefile <<'!NO!SUBS!'
 realclean clobber: clean
 	$(RM) -f certify core Makefile config.sh
-
-install.man::
-	@echo "	Warning: manual pages for des not installed."
 
 !NO!SUBS!
 chmod 755 Makefile

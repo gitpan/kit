@@ -17,16 +17,12 @@ $spitshell >makeshar <<!GROK!THIS!
 $startsh
 # (c) Raphael Manfredi, December 25th 1991
 
-# $Id: makeshar.SH,v 2.0.1.6 2000/10/19 18:17:14 ram Exp $
+# $Id: makeshar.SH,v 2.0.1.5 1993/01/11 18:08:54 ram Exp $
 #
 # $Log: makeshar.SH,v $
-# Revision 2.0.1.6  2000/10/19 18:17:14  ram
-# patch38: added fix for broken bash
-# patch38: added trap statement to cleanup
-#
-# Revision 2.0.1.5  93/01/11  18:08:54  ram
+# Revision 2.0.1.5  1993/01/11  18:08:54  ram
 # patch22: sorting done numerically with -n option
-# 
+#
 # Revision 2.0.1.4  92/05/02  14:19:45  ram
 # patch16: maximum part size can now be specified via -s
 # 
@@ -42,7 +38,7 @@ $startsh
 # 
 
 # Where rshar is located
-libdir='$privlibexp'
+libdir='$privlib'
 
 !GROK!THIS!
 $spitshell >>makeshar <<'!NO!SUBS!'
@@ -79,8 +75,6 @@ do
 		;;
 	esac
 done
-
-trap 'rm -f zzz.list; exit 1' 1 2 3 15
 
 (
 	for i
@@ -135,10 +129,7 @@ END {
 		print list[i] >> "zzz.list";
 }
 '
-# The following is not an UUC (Useless Use of Cat). On my Linux 2.0.30 system,
-# bash does not understand "<zzz.list (" which had been perfectly OK on all
-# the other systems I used for the past 9 years, without bash as /bin/sh.
-cat zzz.list | (
+<zzz.list (
 	# Now back to the shell, parse the output from awk and invoke rshar
 	read max;
 	i=1

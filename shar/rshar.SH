@@ -20,7 +20,7 @@ $startsh
 # $Id: rshar.SH,v 2.0.1.4 1992/04/20 17:43:22 ram Exp $
 #
 # $Log: rshar.SH,v $
-# Revision 2.0.1.4  1992/04/20 17:43:22  ram
+# Revision 2.0.1.4  1992/04/20  17:43:22  ram
 # patch15: determination of user and host no longer uses a sub-shell
 #
 # Revision 2.0.1.3  92/03/24  13:46:04  ram
