@@ -18,9 +18,14 @@ $spitshell >kit.$manext <<!GROK!THIS!
 .TH KIT $manext "Version $VERSION PL$PATCHLEVEL"
 ''' @(#) Manual page for mailing kit -- (c) ram July 1990
 '''
-''' $Id: kit.SH,v 2.0.1.14 1995/10/12 11:04:03 ram Exp $
+''' $Id: kit.SH,v 2.0.1.15 1998/03/30 14:26:26 ram Exp $
 '''
 ''' $Log: kit.SH,v $
+''' Revision 2.0.1.15  1998/03/30 14:26:26  ram
+''' patch35: man page now uses the ~expanded version of config paths
+''' patch35: new -u unkit switch to stop after the unshar phase
+''' patch35: new -C kit switch to select alternate compression schemes
+'''
 ''' Revision 2.0.1.14  1995/10/12  11:04:03  ram
 ''' patch31: updated my e-mail address
 ''' patch31: fixed a few typo
@@ -90,14 +95,14 @@ $spitshell >kit.$manext <<!GROK!THIS!
 kit, mailkit, unkit \- the ultimate mailing tools
 .SH SYNOPSIS
 \fBkit\fR [ \fB\-EFHMBVXefhpx\fR ] [ \fB\-S\fI size\fR ]
-[ \fB\-a\fI address\fR ] [ \fB\-k\fI key\fR ]
+[ \fB\-a\fI address\fR ] [ \fB\-k\fI key\fR ] [ \fB\-C\fI compress-tag\fR ]
 [ \fB\-d\fI dir\fR ] [ \fB\-m\fI address\fR ] [ \fB\-n\fI basename\fR ]
 [ \fB\-l\fI file\fR ] [ \fB\-s\fI name\fR ] \fIdirectories\fR | \fIfiles\fR
 .sp
 \fBmailkit\fR [ \fB\-EFVcefhp\fR ] [ \fB\-l\fI file\fR ]
 [ \fB\-n\fI partname\fR ] \fItitle\fR [ \fIaddress(es)\fR ]
 .sp
-\fBunkit\fR [ \fB\-bhlprRsSV\fR ] [\fB\-d\fI dir\fR ]
+\fBunkit\fR [ \fB\-bhlprsuRSV\fR ] [\fB\-d\fI dir\fR ]
 [ \fB\-k\fI key\fR ] [ \fIfiles\fR ]
 .SH DESCRIPTION
 '''
@@ -284,6 +289,16 @@ when \-\- is encountered.
 .B \-B
 Use \fIbtoa\fR encoding (default), as opposed to hexadecimal encoding.
 .TP
+.B \-C \fItag\fR
+Change the compression algorithm by using the one specified by \fItag\fR.
+The \fIdefault\fR tag uses whatever default is configured in the
+\fIcompressors\fR file in the public kit library (see below in the \fBFILES\fR
+section). This cannot be used with a value other than \fIdefault\fR when
+specifying \fB\-M\fR, since \fIminikit\fR does not support that yet.
+.sp
+Make sure the other party will have the corresponding uncompression program
+available before using this option.
+.TP
 .B \-E
 Edit instructions which will be sent as part #0.
 .TP
@@ -449,6 +464,9 @@ Remove input files if unshar succeeds.
 .B \-s
 Force skipping of security checks, which are conducted only if \fIperl\fR is
 available in your PATH.
+.TP
+.B \-u
+Stop after the \fIunshar\fR process, even when facing a real kit.
 .SH FILES
 .PD 0
 .TP 15
@@ -481,17 +499,28 @@ contains the address where acknowledgment should be sent.
 zzz.subject
 contains the name of kit archive for acknowledgment purposes.
 .TP
-$privlib/minikit
+zzz.zcat
+contains the commands to be used to uncompress the data.
+.TP
+$privlibexp/compressors
+the list ok known compression programs, along with the commands
+to be used for compressing and uncompressing.
+.TP
+$privlibexp/getproc
+script used to extract the proper compressing or uncompressing command,
+based on its tag.
+.TP
+$privlibexp/minikit
 the script which may be used to unkit a distribution when the kit
 package is not available.
 .TP
-$privlib/makeshar
+$privlibexp/makeshar
 the script which emulates \fIcshar\fR's \fImakekit\fR program.
 .TP
-$privlib/rshar
+$privlibexp/rshar
 a simple shell archive maker.
 .TP
-$privlib/secure
+$privlibexp/secure
 security checks (detection of alien code) in kit archives.
 .PD
 .SH ENVIRONMENT

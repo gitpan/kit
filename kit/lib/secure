@@ -1,11 +1,8 @@
 #!/usr/bin/perl
 
-# $Id: secure,v 2.0.1.5 1995/10/12 13:24:55 ram Exp $
+# $Id: secure,v 2.0.1.4 1993/04/27 08:07:07 ram Exp ram $
 #
 # $Log: secure,v $
-# Revision 2.0.1.5  1995/10/12  13:24:55  ram
-# patch34: now safely ignore everything from trailing exit till next part
-#
 # Revision 2.0.1.4  1993/04/27  08:07:07  ram
 # patch28: fixed annoying typo (caused undefined-subroutine error!)
 # patch28: after a chmod, quotes surrounding file name are optional

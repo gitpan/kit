@@ -16,7 +16,7 @@
  * $Id: hexencode.c,v 2.0 1991/02/19 15:49:33 ram Exp $
  *
  * $Log: hexencode.c,v $
- * Revision 2.0  1991/02/19  15:49:33  ram
+ * Revision 2.0  1991/02/19 15:49:33  ram
  * Baseline for first official release.
  *
  */

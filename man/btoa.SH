@@ -21,7 +21,7 @@ $spitshell >btoa.$manext <<!GROK!THIS!
 ''' $Id: btoa.SH,v 2.0.1.1 1991/05/27 14:31:27 ram Exp $
 '''
 ''' $Log: btoa.SH,v $
-''' Revision 2.0.1.1  1991/05/27  14:31:27  ram
+''' Revision 2.0.1.1  1991/05/27 14:31:27  ram
 ''' patch5: search for config.sh is now silent
 '''
 ''' Revision 2.0  91/02/19  15:50:22  ram

@@ -1,0 +1,29 @@
+/*
+ * Jmakefile for kit library files
+ */
+
+;# $Id: Jmakefile,v 2.0.1.1 1998/03/30 14:26:47 ram Exp $
+;#
+;#  @COPYRIGHT@
+;#
+;# $Log: Jmakefile,v $
+;# Revision 2.0.1.1  1998/03/30 14:26:47  ram
+;# patch35: created
+;#
+;# Revision 2.9  92/07/14  16:47:32  ram
+;# 3.0 beta baseline.
+;# 
+
+FILES = secure compressors
+SCRIPTS = getopt getproc minikit range
+
+>PRIVLIB	/* Force metaconfig to ask for privlib location */
+
+all::
+
+NoManPages()
+SimpleShellScriptTarget($(SCRIPTS))
+MakeInstallDirectories($(PRIVLIB))
+InstallMultipleFlags($(FILES),$(PRIVLIB),-m 444)
+InstallMultipleFlags($(SCRIPTS),$(PRIVLIB),-m 555)
+

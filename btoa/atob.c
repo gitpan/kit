@@ -24,7 +24,7 @@
  * $Id: atob.c,v 2.0.1.1 1993/04/26 11:18:01 ram Exp $
  *
  * $Log: atob.c,v $
- * Revision 2.0.1.1  1993/04/26  11:18:01  ram
+ * Revision 2.0.1.1  1993/04/26 11:18:01  ram
  * patch27: added support for 64 bits architecture (tested on Alpha)
  *
  * Revision 2.0  91/02/19  15:49:21  ram

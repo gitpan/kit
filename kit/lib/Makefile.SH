@@ -1,5 +1,5 @@
-: Makefile.SH generated from Jmake.tmpl and Jmakefile [jmake 3.0 PL13]
-: $X-Id: Jmake.tmpl,v 3.0.1.1 1993/08/20 07:36:36 ram Exp ram $
+: Makefile.SH generated from Jmake.tmpl and Jmakefile [jmake 3.0 PL70]
+: $X-Id: Jmake.tmpl,v 3.0.1.3 1997/02/28 14:56:16 ram Exp ram $
 
 case $CONFIG in
 '')
@@ -17,84 +17,108 @@ esac
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
-CURRENT=man
+CURRENT=kit/lib
 DIR=`echo $CURRENT/ | sed -e 's/\.\///g'`
 echo "Extracting ${DIR}Makefile (with variable substitutions)"
+
+INSTALL=`echo $install | sed -e 's,\./i,\$(TOP)/i,'`
+INSTALLDIR=`echo $installdir | sed -e 's,\./i,\$(TOP)/i,'`
 DATE=`date`
+
 $spitshell >Makefile <<!GROK!THIS!
 ########################################################################
 # Makefile generated from Makefile.SH on $DATE
 
 SHELL = /bin/sh
 JMAKE = jmake
-TOP = ..
+TOP = ../..
 CURRENT = $CURRENT
 DIR = $DIR
-INSTALL = ../install
+INSTALL = $INSTALL
+INSTALLDIR = $INSTALLDIR
 
 ########################################################################
 # Parameters set by Configure -- edit config.sh if changes are needed
 
 CTAGS = ctags
-L = $manext
-MANSRC = $installmansrc
 MAKE = make
 MV = $mv
+PRIVLIB = $installprivlib
 RM = $rm -f
-
-########################################################################
-# Automatically generated parameters -- do not edit
-
-MANPAGE =  \$(MPAGES)
-
-########################################################################
-# New suffixes and associated building rules -- edit with care
-
-.SUFFIXES: .SH .$manext
-
-.SH.$manext:
-	/bin/sh \$<
 
 !GROK!THIS!
 $spitshell >>Makefile <<'!NO!SUBS!'
 ########################################################################
 # Jmake rules for building libraries, programs, scripts, and data files
-# $X-Id: Jmake.rules,v 3.0 1993/08/18 12:04:14 ram Exp ram $
+# $X-Id: Jmake.rules,v 3.0.1.6 1997/02/28 14:56:01 ram Exp ram $
 
 ########################################################################
 # Start of Jmakefile
 
-# $X-Id: Jmakefile,v 2.9 92/07/14 16:49:04 ram Exp $
+# $X-Id: Jmakefile,v 2.9 92/07/14 16:47:32 ram Exp $
 #
 #  @COPYRIGHT@
 #
 # $X-Log:	Jmakefile,v $
-# Revision 2.9  92/07/14  16:49:04  ram
+# Revision 2.9  92/07/14  16:47:32  ram
 # 3.0 beta baseline.
 #
 
-MPAGES = kit.$(L) unkit.$(L) mailkit.$(L) atob.$(L) btoa.$(L)
+FILES = secure compressors
+SCRIPTS = getopt getproc minikit range
 
-all:: $(MPAGES)
+all::
+
+all:: $(SCRIPTS)
 
 local_realclean::
-	$(RM) $(MPAGES)
+	$(RM) $(SCRIPTS)
 
-install.man::
-	@if test "$(MANSRC)"; then \
-		case '${MFLAGS}' in *[i]*) set +e;; esac; \
-		for file in $(MPAGES); do \
-			(set -x; $(INSTALL) -c -m 444 $$file $(MANSRC)); \
-		done; \
-	else exit 0; fi
+getopt: getopt.SH
+	/bin/sh getopt.SH
 
-deinstall.man::
-	@if test "$(MANSRC)"; then \
-		case '${MFLAGS}' in *[i]*) set +e;; esac; \
-		for file in $(MPAGES); do \
-			(set -x; $(RM) $(MANSRC)/$$file); \
-		done; \
-	else exit 0; fi
+getproc: getproc.SH
+	/bin/sh getproc.SH
+
+minikit: minikit.SH
+	/bin/sh minikit.SH
+
+range: range.SH
+	/bin/sh range.SH
+
+
+install::
+	@for dir in $(PRIVLIB); do \
+	case '${MFLAGS}' in *[i]*) set +e;; esac; \
+	(set -x; test -d $$dir || $(INSTALLDIR) $$dir); \
+	done
+
+deinstall::
+	$(RM) -r $(PRIVLIB)
+
+install:: $(FILES)
+	@case '${MFLAGS}' in *[i]*) set +e;; esac; \
+	for i in $(FILES); do \
+	(set -x; $(INSTALL) -c -m 444 $$i $(PRIVLIB)); \
+	done
+
+deinstall::
+	@case '${MFLAGS}' in *[i]*) set +e;; esac; \
+	for i in $(FILES); do \
+	(set -x; $(RM) $(PRIVLIB)/$$i); \
+	done
+
+install:: $(SCRIPTS)
+	@case '${MFLAGS}' in *[i]*) set +e;; esac; \
+	for i in $(SCRIPTS); do \
+	(set -x; $(INSTALL) -c -m 555 $$i $(PRIVLIB)); \
+	done
+
+deinstall::
+	@case '${MFLAGS}' in *[i]*) set +e;; esac; \
+	for i in $(SCRIPTS); do \
+	(set -x; $(RM) $(PRIVLIB)/$$i); \
+	done
 
 ########################################################################
 # Common rules for all Makefiles -- do not edit
@@ -115,12 +139,12 @@ local_clobber:: local_realclean
 
 Makefile.SH: Jmakefile
 	-@if test -f $(TOP)/.package; then \
-		if test -f Makefile.SH; then \
-			echo "	$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~"; \
-			$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~; \
-		fi; \
-		echo "	$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT)" ; \
-		$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT) ; \
+	if test -f Makefile.SH; then \
+	echo "	$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~"; \
+	$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~; \
+	fi; \
+	echo "	$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT)" ; \
+	$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT) ; \
 	else touch $@; exit 0; fi
 
 Makefile: Makefile.SH

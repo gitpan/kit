@@ -3,7 +3,7 @@
  * $Id: main.c,v 2.0.1.1 1991/04/01 15:40:10 ram Exp $
  *
  * $Log: main.c,v $
- * Revision 2.0.1.1  1991/04/01  15:40:10  ram
+ * Revision 2.0.1.1  1991/04/01 15:40:10  ram
  * patch1: created
  *
  */

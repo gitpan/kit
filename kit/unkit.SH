@@ -19,9 +19,14 @@ $startsh
 # @(#) (c) E. Mogenet April 1990
 # @(#) (c) R. Manfredi, 1990-1993
 
-# $Id: unkit.SH,v 2.0.1.18 1995/10/12 11:14:55 ram Exp $
+# $Id: unkit.SH,v 2.0.1.19 1998/03/30 14:25:02 ram Exp $
 #
 # $Log: unkit.SH,v $
+# Revision 2.0.1.19  1998/03/30 14:25:02  ram
+# patch35: use privlibexp for libdir to get ~expanded version
+# patch35: knows how to deal with zzz.zcat for alternate uncompression
+# patch35: new -u switch to stop after the unshar phase
+#
 # Revision 2.0.1.18  1995/10/12  11:14:55  ram
 # patch32: new -R option to remove leading / in pathnames
 #
@@ -101,7 +106,7 @@ $startsh
 # Which patch-level is it ?
 pl='$PATCHLEVEL'
 version='$VERSION'
-libdir='$privlib'
+libdir='$privlibexp'
 
 # Tar options to be used
 badtar='$needbtar'
@@ -138,6 +143,7 @@ directory=''				# Cd there before starting extraction
 usebtar=''					# Do not use badtar
 pstrip=''					# Option for badtar to strip leading / in paths
 key=''						# Key for DES decoding
+unshar_only=no				# Set to yes if only unshar'ing
 
 # In case we are interrupted, remove all the temporary files
 trap 'test -f zzz.minikit && rm -f `cat zzz.minikit` zzz.minikit; \
@@ -145,7 +151,7 @@ trap 'test -f zzz.minikit && rm -f `cat zzz.minikit` zzz.minikit; \
 
 # Old Bourne shells do not have functions
 usage='
-echo "Usage: unkit [-bhlprRsSV] [-d dir] [-k key] [file1 ... filen]";
+echo "Usage: unkit [-bhlprsuRSV] [-d dir] [-k key] [file1 ... filen]";
 echo " "" -b : force use of badtar ($badtar by default).";
 echo " "" -d : cd to specified directory before starting extraction.";
 echo " "" -h : give this help message.";
@@ -153,15 +159,16 @@ echo " "" -k : set the key used for data decryption.";
 echo " "" -l : list files held in the kit parts.";
 echo " "" -p : preserve input files (default).";
 echo " "" -r : remove input files if unshar succeeds.";
-echo " "" -R : remove leading / if absolute pathnames were used.";
 echo " "" -s : skip security checks on shell-archives.";
+echo " "" -u : unshar only, then stop.";
+echo " "" -R : remove leading / if absolute pathnames were used.";
 echo " "" -S : extra secure; abort if security checks cannot be made.";
 echo " "" -V : print current version and patch-level.";
 exit 1
 '
 
 # Process the command line options
-eval "set X "`$libdir/getopt bhlprRsSVd:k: "$@"`; shift
+eval "set X "`$libdir/getopt bhlprsuRSVd:k: "$@"`; shift
 while test $# -gt 0
 do
 	case "$1" in
@@ -188,6 +195,8 @@ do
 		shift
 		shift;;
 	-s) secure=no
+		shift;;
+	-u) unshar_only=yes
 		shift;;
 	-S) extra_secure=yes
 		shift;;
@@ -385,6 +394,11 @@ case "$unsecure" in
 	;;
 esac
 
+# If -u was used, don't go further
+case "$unshar_only" in
+yes) exit 0;;
+esac
+
 # Now check for file names to find how to decode
 if test -f z[ace][gbc].ba.aa -a ! -f ark*isdone
 then
@@ -412,12 +426,19 @@ true) tarcmd="badtar -s -o $pstrip -f - | tar $tar_opt -";;
 	;;
 esac
 
-echo "Decoding with $decoding | zcat | $tarcmd"
+# Select uncompressing program
+if test -f 'zzz.zcat'; then
+	uncompress='( '`cat zzz.zcat`' )'
+else
+	uncompress=zcat
+fi
+
+echo "Decoding with $decoding | $uncompress | $tarcmd"
 
 status=1
 cat `ls z??.[hb][ea]*.??` |
 eval $decoding		|
-zcat				|
+eval "$uncompress"	|
 eval "$tarcmd" && status=0
 
 # Send acknowledgment only when unpacking was successful.

@@ -1,72 +1,198 @@
+: Makefile.SH generated from Jmake.tmpl and Jmakefile [jmake 3.0 PL13]
+: $X-Id: Jmake.tmpl,v 3.0.1.1 1993/08/20 07:36:36 ram Exp ram $
+
 case $CONFIG in
 '')
-	if test ! -f config.sh; then
-		ln ../config.sh . || \
-		ln ../../config.sh . || \
-		ln ../../../config.sh . || \
-		(echo "Can't find config.sh."; exit 1)
-	fi 2>/dev/null
-	. config.sh
+	if test -f config.sh; then TOP=.;
+	elif test -f ../config.sh; then TOP=..;
+	elif test -f ../../config.sh; then TOP=../..;
+	elif test -f ../../../config.sh; then TOP=../../..;
+	elif test -f ../../../../config.sh; then TOP=../../../..;
+	else
+		echo "Can't find config.sh."; exit 1
+	fi
+	. $TOP/config.sh
 	;;
 esac
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
-echo "Extracting Makefile (with variable substitutions)"
+CURRENT=.
+DIR=`echo $CURRENT/ | sed -e 's/\.\///g'`
+echo "Extracting ${DIR}Makefile (with variable substitutions)"
+DATE=`date`
 $spitshell >Makefile <<!GROK!THIS!
-#
-#	Makefile for kit
-#
-
-# $Id: Makefile.SH,v 2.0.1.5 1992/01/11 19:08:43 ram Exp $
-#
-# $Log: Makefile.SH,v $
-# Revision 2.0.1.5  1992/01/11  19:08:43  ram
-# patch11: added subdirectories badtar and shar
-#
-# Revision 2.0.1.4  91/12/08  14:53:40  ram
-# patch10: make clobber was not removing cppstdin
-# 
-# Revision 2.0.1.3  91/11/25  12:03:02  ram
-# patch8: this file was stamped with a wrong package name
-# 
-# Revision 2.0.1.2  91/05/27  14:14:19  ram
-# patch5: some dumb make failed on previous makefile
-# 
-# Revision 2.0.1.1  91/04/01  15:34:43  ram
-# patch1: added des target
-# 
-# Revision 2.0  91/02/19  15:48:41  ram
-# Baseline for first official release.
-# 
+########################################################################
+# Makefile generated from Makefile.SH on $DATE
 
 SHELL = /bin/sh
+JMAKE = jmake
+TOP = .
+CURRENT = $CURRENT
+DIR = $DIR
 
-SUBDIRS = badtar btoa kit shar man des
-RM = $rm
+########################################################################
+# Parameters set by Configure -- edit config.sh if changes are needed
+
+CTAGS = ctags
+MAKE = make
+MV = $mv
+RM = $rm -f
+
+########################################################################
+# Automatically generated parameters -- do not edit
+
+SUBDIRS = \$(SH_DIRS) \$(C_DIRS) des
+
 !GROK!THIS!
 $spitshell >>Makefile <<'!NO!SUBS!'
+########################################################################
+# Jmake rules for building libraries, programs, scripts, and data files
+# $X-Id: Jmake.rules,v 3.0 1993/08/18 12:04:14 ram Exp ram $
 
+########################################################################
+# Start of Jmakefile
+
+# $X-Id: Jmakefile,v 2.9 92/07/14 16:46:57 ram Exp $
 #
-#	Building rules
+#  @COPYRIGHT@
+#
+# $X-Log:	Jmakefile,v $
+# Revision 2.9  92/07/14  16:46:57  ram
+# 3.0 beta baseline.
 #
 
-all install clean realclean: makefiles
-	-@for dir in $(SUBDIRS); do \
-		(cd $$dir && make $@) \
+all::
+
+C_DIRS = badtar btoa
+SH_DIRS = kit shar man
+
+depend::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(C_DIRS) ;\
+	do \
+		(cd $$i ; echo "Depending" "in $(DIR)$$i..."; \
+			$(MAKE) $(MFLAGS)  depend); \
 	done
 
-makefiles:
-	-@for dir in $(SUBDIRS); do \
-		(cd $$dir && if test ! -f Makefile; then \
-			sh Makefile.SH; fi) \
+local_clobber::
+	$(RM) install mkdep cppstdin
+
+########################################################################
+# Common rules for all Makefiles -- do not edit
+
+emptyrule::
+
+clean: sub_clean local_clean
+realclean: sub_realclean local_realclean
+clobber: sub_clobber local_clobber
+
+local_clean::
+	$(RM) core *~ *.o
+
+local_realclean:: local_clean
+	$(RM) -r UU
+
+local_clobber:: local_realclean
+	$(RM) config.sh config.h
+	$(RM) Makefile
+
+Makefile.SH: Jmakefile
+	-@if test -f $(TOP)/.package; then \
+		if test -f Makefile.SH; then \
+			echo "	$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~"; \
+			$(RM) Makefile.SH~; $(MV) Makefile.SH Makefile.SH~; \
+		fi; \
+		echo "	$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT)" ; \
+		$(JMAKE) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT) ; \
+	else touch $@; exit 0; fi
+
+Makefile: Makefile.SH
+	/bin/sh Makefile.SH
+
+tags::
+	$(CTAGS) -w *.[ch]
+	$(CTAGS) -xw *.[ch] > tags
+
+local_clobber::
+	$(RM) tags
+
+########################################################################
+# Rules for building in sub-directories -- do not edit
+
+subdirs:
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i ; echo $(VERB) "in $(DIR)$$i..."; \
+			$(MAKE) $(MFLAGS) $(FLAGS) $(TARGET)); \
 	done
 
-clobber: makefiles
-	-@for dir in $(SUBDIRS); do \
-		(cd $$dir && make $@) \
+install::
+	@$(MAKE) subdirs TARGET=install VERB="Installing" FLAGS=
+
+deinstall::
+	@$(MAKE) subdirs TARGET=deinstall VERB="Deinstalling" FLAGS=
+
+install.man::
+	@$(MAKE) subdirs TARGET=install.man VERB="Installing man pages" FLAGS=
+
+deinstall.man::
+	@$(MAKE) subdirs TARGET=deinstall.man VERB="Deinstalling man pages" FLAGS=
+
+sub_clean::
+	@$(MAKE) subdirs TARGET=clean VERB="Cleaning" FLAGS=
+	@echo "Back to $(CURRENT) for "clean...
+
+sub_realclean::
+	@$(MAKE) subdirs TARGET=realclean VERB="Real cleaning" FLAGS=
+	@echo "Back to $(CURRENT) for "realclean...
+
+sub_clobber::
+	@$(MAKE) subdirs TARGET=clobber VERB="Clobbering" FLAGS=
+	@echo "Back to $(CURRENT) for "clobber...
+
+tag::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i ; echo "Tagging" "in $(DIR)$$i..."; \
+			$(MAKE) $(MFLAGS)  tag); \
 	done
-	$(RM) -f config.h config.sh Makefile install cppstdin
+
+Makefiles::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS);\
+	do \
+		echo "Making "Makefiles" in $(DIR)$$i..."; \
+		(cd $$i || exit 1; \
+		if test ! -f Makefile; then /bin/sh Makefile.SH; fi; \
+		$(MAKE) $(MFLAGS) Makefiles) \
+	done
+
+Makefiles.SH:: Makefile.SH
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS);\
+	do \
+		case "$(DIR)$$i/" in \
+		*/*/*/*/) newtop=../../../..;; \
+		*/*/*/) newtop=../../..;; \
+		*/*/) newtop=../..;; \
+		*/) newtop=..;; \
+		esac; \
+		case "$(TOP)" in \
+		/*) newtop="$(TOP)" ;; \
+		esac; \
+		echo "Making Makefiles.SH in $(DIR)$$i..."; \
+		(cd $$i || exit 1; $(MAKE) $(MFLAGS) -f ../Makefile \
+		Makefile TOP=$$newtop CURRENT=$(DIR)$$i;\
+		$(MAKE) $(MFLAGS) Makefiles.SH) \
+	done
+
+all::
+	@$(MAKE) subdirs TARGET=all VERB="Making all" FLAGS=
+
 !NO!SUBS!
-chmod 755 Makefile
+chmod 644 Makefile
 $eunicefix Makefile
+

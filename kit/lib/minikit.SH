@@ -13,19 +13,16 @@ case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
 
-# $Id: minikit.SH,v 2.0.1.2 1995/10/12 10:56:29 ram Exp $
+# $Id: minikit.SH,v 2.0.1.1 92/04/20 17:38:35 ram Exp $
 #
-# $Log: minikit.SH,v $
-# Revision 2.0.1.2  1995/10/12  10:56:29  ram
-# patch29: added minimal support for 64-bit systems
-#
+# $Log:	minikit.SH,v $
 # Revision 2.0.1.1  92/04/20  17:38:35  ram
 # patch15: minikit now extracted via a .SH file
 # patch15: added acknowledgment support
 # patch15: replaced space indentation with tabs
 # 
 
-echo "Extracting kit/minikit (with variable substitutions)"
+echo "Extracting kit/lib/minikit (with variable substitutions)"
 $spitshell >minikit <<!GROK!THIS!
 #! /bin/sh
 (exit \$?0) || exec sh \$0

@@ -1,6 +1,6 @@
                              kit 2.0
 
-              Copyright (c) 1990-1995, Raphael Manfredi
+              Copyright (c) 1990-2000, Raphael Manfredi
 
 You may copy this kit in whole or in part as long as you don't try to
 make money off it, or pretend you wrote it.
@@ -14,9 +14,6 @@ After you have unpacked your kit, you should have all the files listed
 in MANIFEST.
 
 Kit used to rely on Rich Salz's cshar package but is now self-contained.
-
-In order to use kit, you must have an implementation of compress. If you
-miss it, send me a mail: ram@hptnos02.grenoble.hp.com (Raphael Manfredi).
 
 Moreover, hexdecode, hexencode, atob and btoa must be installed. The
 public-domain implementation of des, which is provided with kit, must
@@ -54,16 +51,6 @@ you got.
 clean up everything and let you re-distribute this kit, without
 carrying useless files. You should keep this distribution intact, so
 that future patches will be applicable.
-
-7) I have an automatic patch sender. Send me a mail of the following
-form:
-
-	Subject: Command
-	@SH mailhelp PATH
-
-and you will get instructions about how to use it. PATH stands for
-YOUR e-mail address, either in INTERNET form or in bang notation.
-
 
 CREDITS
 
@@ -103,4 +90,4 @@ please let me know about it and I'll fix that as soon as possible. Although
 I strive to keep it accurate, things get so hectic here that sometimes I
 simply forget to update it.
 
-	Raphael Manfredi <ram@hptnos02.grenoble.hp.com>
+	Raphael Manfredi <Raphael_Manfredi@pobox.com>
