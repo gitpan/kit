@@ -1,0 +1,124 @@
+#!/usr/bin/perl
+
+# $Id: secure,v 2.0.1.5 1995/10/12 13:24:55 ram Exp $
+#
+# $Log: secure,v $
+# Revision 2.0.1.5  1995/10/12  13:24:55  ram
+# patch34: now safely ignore everything from trailing exit till next part
+#
+# Revision 2.0.1.4  1993/04/27  08:07:07  ram
+# patch28: fixed annoying typo (caused undefined-subroutine error!)
+# patch28: after a chmod, quotes surrounding file name are optional
+#
+# Revision 2.0.1.3  1993/04/26  11:20:27  ram
+# patch27: added support for kit's own archiver variables
+# patch27: will now skip leading comments in kit parts (when concatenated)
+#
+# Revision 2.0.1.2  93/02/10  15:29:00  ram
+# patch25: forgot checks for archives with more than 10 parts
+# patch25: kit's own shar removes ark*isdone for multipart archives
+# 
+# Revision 2.0.1.1  93/02/08  18:12:21  ram
+# patch24: created
+# 
+
+# Scan shell archive (the subset used by kit) and determines if it contains
+# alien code which could be a virus of some sort and infect the machine or
+# the user's account when ran through a shell.
+# Unfortunately, perl is needed to make those checks.
+#
+# This program knows about the format of shell archives created by cshar or
+# makeshar, for kit purposes. We know for instance there will never be a
+# need for mkdir.
+
+# The exits variable records how many 'exit 0' lines we find in the shell
+# archive. There must be one exactly. Once found, all the lines up to the
+# next shell archive leading #! comment are skipped. If at the end the amount
+# of shell archives and exit commands differ, the kit is unsecure.
+
+$exits = 0;
+$archives = 0;
+
+# The inblock variable is set to true if within an if..fi or do..done loop
+# This is used to detect spurious 'exit 0' lines that would be present but
+# not executed, hence fooling this script into believing it has reached
+# the end of the shell archive.
+
+$inblock = 0;
+
+while (<>) {
+	m|^#! /bin/sh| && ($archives++, $in = 1) && next;
+	next unless $in;		# Not in archive yet
+	chop;
+	/^END_OF_FILE$/ && (($file = 0) || next);
+	next if $file;			# Inside file extraction
+	s/^\s+//;				# Strip leading blanks
+	/^#/ && next;			# Shell comment
+	/^$/ && next;			# Blank line
+	$scanned = $_;			# Save current line before modifications
+	if (/^sed/) {			# Must be file extraction
+		$file = 1;
+		next if
+			m|^sed\s+['"]s/\^X//['"]\s*>\s*'?[\w.]+'?\s*<<\s*'END_OF_FILE'$|;
+		&error;
+	} elsif (s/^PATH=(.*); export PATH$/$1/) {
+		&strong_check;
+	} elsif (/^fi/ || /^else/ || /^done/ || /^exitcode=/) {
+		&loose_check;
+		$inblock-- if /^fi/ || /^done/;
+	} elsif (/^echo/) {
+		s/\\\\/\01/g;		# \\ -> ^A
+		s/\\.//g;			# Remove escaped characters
+		s/\01/\\/;			# ^A -> \ (forbidden anyway)
+		&echo_check;
+	} elsif (s/^if (.*); then\s*$/$1/) {
+		$inblock++;
+		next if /^test -f '[\w.]+' -a "\$\{1\}\" != "-c"\s*$/;
+		next if /^test \d+ -ne `wc -c <\s*'[\w.]+'`\s*$/;
+		next if /^test ! -f ark\$\{i\}isdone\s*$/i;
+		next if /^test "\$\{?missing\}?" = ""\s*$/i;
+		&error;
+	} elsif (s/^rm //) {
+		next if /^-f ark\[1-9\]isdone$/;
+		next if /^-f ark\[1-9\]isdone ark\[1-9\]\[0-9\]isdone$/;
+		next if /^-f ark\*isdone$/;
+		&error;
+	} elsif (s/^cp //) {
+		next if m|^/dev/null ark\d+isdone$|;
+		&error;
+	} elsif (s/^chmod //) {
+		next if m|^\+x '?[\w.]+'?$|;	# Quotes for cshar only
+		&error;
+	} elsif (s/^for (.*); do\s*$/$1/) {
+		$inblock++;
+		&loose_check;
+	} elsif (s/^>>\s?//) {	# Kit leading comments
+		&comment_check;
+	} elsif (/^exit \$?\w+$/) {	# End of shell archive -- mandatory
+		&loose_check;
+		$exits++ unless $inblock;	# Cannot be within a block
+		&error if $exits != $archives;
+		$in = 0 unless $inblock;	# Out of shell archive
+	} else {
+		next if /^missing="(\$\{?missing\}?\s+\$\{?i\}?)?"$/i;
+		next if /^missing=''$/i;
+		&error;
+	}
+}
+
+die "unkit: suspicious kit assembly!\n" if $exits != $archives || $inblock;
+
+exit($errors ? 1 : 0);		# Exit status (0 means ok)
+
+# Unsafe operation was detected
+sub error {
+	print STDERR "unkit: \"$ARGV\", suspicious line $.: $scanned\n";
+	$errors++;
+}
+
+# Check arguments to echo (no fear for () or {} subshells for instance), etc...
+sub comment_check	{ &error if /[&^`\\|;><?]/; }
+sub echo_check		{ &error if /[&^*[`\\|;><?]/; }
+sub loose_check		{ &error if /[&^*([{}`\\|;><?]/; }
+sub strong_check	{ &error if /[=\$^&*([{}`\\|;><?]/; }
+

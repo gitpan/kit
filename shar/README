@@ -1,0 +1,18 @@
+This directory contains a set of shell scripts which are to be used
+by kit when cshar is not available. Those scripts are not intended
+to be executed directly by the user, hence no manual page is provided
+and the scripts are installed in the private library directory.
+
+There should be no difference from the user's point of view when kit
+uses those scripts instead of the cshar package. The aim was to make
+kit a self-contained package. When possible however, cshar should be
+installed. Kit will automatically use cshar whenever it can.
+
+In the design of the shell archive produced by rshar, I freely borrowed
+the style used by Rich Salz in his cshar package. In the makeshar script,
+the algorithm used to assign each file a part number comes directly from
+the makedist perl script found in Larry Wall's dist 2.0.
+
+The scripts are so small they are installed in the public kit library
+even if cshar is installed. It might be useful if the kit scripts are
+shared accross different machines and some do miss cshar.

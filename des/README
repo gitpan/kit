@@ -1,0 +1,39 @@
+Here is an excerpt from the original public-domain DES package, written
+by Phil Karn and cleaned up by Bdale Garbee. I removed all the unneeded
+stuff for kit, and I added some defines in the code, so that it can
+be meta-configured. I also rewrote the Makefile.
+
+I left the two man pages des.1 and des.3, but the main Makefile won't
+install them, because they may conflict with already existing manual
+pages. However, des itself is installed, because kit needs it for
+its encryption facilities.
+
+Raphael Manfredi <ram@eiffel.com>
+
+- - - - -
+
+Phil asked me to clean this up slightly and package it for distribution.
+I've got it running on my Symmetric 4.2bsd system, Phil reports it runs fine
+on a variety of systems at Bellcore.  Note that getopt is required but not
+provided, as there is already a getopt package in the mod.sources archives.
+
+Bdale Garbee, N3EUA  870401	
+winfree!bdale aka bdale%winfree.uucp@flash.bellcore.com
+
+- - - - -
+
+This package contains a DES subroutine library based on the original public
+domain code by James Gillogly, but made faster and more flexible. Commands
+using this library have been added for testing and for encrypting and
+decrypting files (compatible with the DES command under Sun UNIX), among
+other things.
+
+Run make. That will compile everything and run test data (from the NBS
+certification suite) through it.  It runs as-is under UNIX. It will run
+under MS-DOS with a few minor changes: make sure you define LITTLE_ENDIAN
+when compiling des.c, and change the name of the console in getpass.c.  If
+you have the byte order flag set wrong, you will get ENCRYPT FAIL messages
+when the descert test is run.
+
+Phil Karn, KA9Q
+karn@flash.bellcore.com

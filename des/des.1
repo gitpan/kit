@@ -1,0 +1,103 @@
+.TH DES 1  "30 March 1991"
+'''
+''' $Id: des.1,v 2.0.1.1 1991/04/01 15:39:16 ram Exp $
+'''
+''' $Log: des.1,v $
+''' Revision 2.0.1.1  1991/04/01  15:39:16  ram
+''' patch1: created
+'''
+'''
+.SH NAME
+des - DES file encryption
+.SH SYNOPSIS
+.PP
+.B des -e|-d [-h] [-k key] [-b]
+.SH DESCRIPTION
+.B Des
+is a filter that encrypts or decrypts standard input to standard output
+with the Data Encryption Standard (DES).
+Either -e (encrypt) or -d (decrypt) must be specified. If the key is not
+given on the command line with the -k option the command will prompt for it
+twice, suppressing echo and comparing the two responses to guard against
+mistyping.
+.PP
+The
+.B des
+command is provided to promote secure exchange of data in a standard
+fashion.
+.PP
+The -h flag controls how the key string is to be interpreted. Without
+the -h flag, the key is an ASCII string. Since DES ignores the low
+order bit of each key byte, the high order bit is set for odd parity,
+thus retaining the information contained in the low order bit. If the
+-h flag is set, the key string is interpreted as 16 hex/ASCII
+characters; the low order bit of each byte is again ignored as per the
+DES algorithm. This allows the use of any arbitrary 56-bit key,
+including bytes representing control characters that could not be typed
+if the -h option were not used.
+.PP
+By default, DES Cipher Block Chaining (CBC) mode is used, with an initial
+vector (IV) of all zeros; if the -b option is specified, Electronic Code
+Book (ECB, eight bytes at a time) mode is used instead.
+.PP
+The CBC mode treats an entire file as a unit of encryption, that is,
+if insertions or deletions are made to the encrypted file then
+decryption will not succeed.
+CBC mode also ensures  that regularities in clear data do not appear
+in the encrypted data.
+.PP
+ECB mode treats each 8 bytes as units of encryptions, so if parts
+of the encrypted file are modified then other parts may still be
+decrypted. Identical values of clear text encrypt to identical values of
+cipher text.
+.PP
+If the key is an argument to the
+.B des
+command, it is potentially visible to users executing
+.BR ps (1)
+or a derivative.
+To minimize this possibility,
+.B des
+takes care to destroy the key argument immediately upon entry.
+.PP
+The following sections give information required to implement compatible
+facilities in other environments.
+.LP
+Since the CBC and ECB modes of DES require units of 8 bytes to be
+encrypted, files being encrypted by the
+.B des
+command have 1 to 8 bytes appended to them to cause them to be a
+multiple of 8 bytes. The last byte, when decrypted, gives the number
+of bytes (0 to 7) which are to be saved of the last 8 bytes. The other
+bytes of those appended to the input are randomized before encryption.
+If, when decrypting, the last byte is not in the range of 0 to 7 then
+either the encrypted file has been corrupted or an incorrect key was
+provided for decryption and an error message is printed.
+.LP
+The DES
+algorithm requires an 8 byte key whose low order bits are assumed to be
+odd-parity bits. The ASCII key supplied by the user is zero padded to
+8 bytes and the high order bits are set to be odd-parity bits. The
+DES algorithm then ignores the low bit of each ASCII
+character, but that bit's information has been preserved in the high
+bit due to the parity.
+.LP
+The CBC mode of operation always uses an initial value of all zeros for
+the initialization vector, so the first 8 bytes of a file are
+encrypted the same whether in CBC or ECB mode.
+.PP
+Except for the -h option, this command is compatible with the
+.B des
+command on the Sun Microsystems workstation.
+.SH BUGS
+.LP
+It would be better to use a real 56-bit key rather than an
+ASCII-based 56-bit pattern.  Knowing that the key was derived from
+ASCII radically reduces the time necessary for a brute-force
+crytographic attack.
+.SH AUTHOR
+Phil Karn, KA9Q.
+.br
+Manual page updated by Raphael Manfredi, from the SUN-OS
+.BR des (1)
+manual page.

@@ -1,0 +1,106 @@
+                             kit 2.0
+
+              Copyright (c) 1990-1995, Raphael Manfredi
+
+You may copy this kit in whole or in part as long as you don't try to
+make money off it, or pretend you wrote it.
+------------------------------------------------------------------------
+                      The ultimate mailing kit
+
+Please read all the directions below before you proceed any further, and
+then follow them carefully.
+
+After you have unpacked your kit, you should have all the files listed
+in MANIFEST.
+
+Kit used to rely on Rich Salz's cshar package but is now self-contained.
+
+In order to use kit, you must have an implementation of compress. If you
+miss it, send me a mail: ram@hptnos02.grenoble.hp.com (Raphael Manfredi).
+
+Moreover, hexdecode, hexencode, atob and btoa must be installed. The
+public-domain implementation of des, which is provided with kit, must
+also be in your PATH if you want to use the encryption facilities.
+
+
+INSTALLATION
+
+1) Run Configure. This will figure out various things about your
+system. After it has been completed, it will produce config.h and
+config.sh.
+
+You might have to trim # comments from the front of Configure if your
+shell doesn't handle them, but any other comments will be taken care of.
+
+2) Run make.
+
+3) If make succeeded, you may wish to do make install. Be sure your
+rights are correct (if you install manual pages, you may need
+super-user privileges).
+
+4) Read the manual entries before running.
+
+5) IMPORTANT! Communicate any problem and suggested patches to me
+ram@hptnos02.grenoble.hp.com (Raphael Manfredi), so we can keep this
+distribution in sync. If you have a problem, there will be someone
+who might have had it or will have it too.
+
+If possible, send me patches such that the patch program will
+apply them. Context diffs are the best, then normal diffs. Do not
+send ed scripts: I have probably changed my copy since the version
+you got.
+
+6) After everything is installed, you can do "make clobber". This will
+clean up everything and let you re-distribute this kit, without
+carrying useless files. You should keep this distribution intact, so
+that future patches will be applicable.
+
+7) I have an automatic patch sender. Send me a mail of the following
+form:
+
+	Subject: Command
+	@SH mailhelp PATH
+
+and you will get instructions about how to use it. PATH stands for
+YOUR e-mail address, either in INTERNET form or in bang notation.
+
+
+CREDITS
+
+Kit relies on three public-domain softwares:
+
+	- des, written by Phil Karn, which is provided with kit.
+	- btoa (as a stripped down implementation).
+	- badtar, written by Mike Williams, with a few enhancements.
+
+
+ACKNOWLEDGMENTS
+
+I would like to thank:
+
+	Gary Casterline <casterln@are.berkeley.edu>
+	Gurvan Lullien <lullien@inf.enst.fr>
+	Michael Fischer <fischer-michael@cs.yale.edu>
+	Monty Solomon <roscom!monty@think.com>
+	Robert M. Cothren <rim@marvin.ri.ccf.org>
+
+for their bug reports and comments.
+
+The criticism of Tim Kuehn <timk@wynnds.xenitec.on.ca> was also much
+appreciated.
+
+I am especially grateful to:
+
+	Christian Bertin <bertin@acri.fr>
+	David Wright <dmw@prism1.com>
+	Jaap Vermeulen <jaap@sequent.com>
+	Kim Walden <kim@enea.se>
+
+for their critical bug reports, suggestions and/or contributions.
+
+Finally, if you feel your name is missing from this acknowledgment list,
+please let me know about it and I'll fix that as soon as possible. Although
+I strive to keep it accurate, things get so hectic here that sometimes I
+simply forget to update it.
+
+	Raphael Manfredi <ram@hptnos02.grenoble.hp.com>
